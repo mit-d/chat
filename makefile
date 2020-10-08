@@ -1,14 +1,14 @@
 
 all: msg
-msg: main.o client.o receive_message.o
+msg: main.o msgclient.o msgd.o
 	$(CC) $^ -o $@ 
 main.o: main.c
 	$(CC) $< -c -o $@
-client.o: client.c
+msgclient.o: msgclient.c
 	$(CC) $< -c -o $@
 # server.o: server.c
 # 	$(CC) $< -c -o $@
-receive_message.o: receive_message.c
+msgd.o: msgd.c
 	$(CC) $< -c -o $@
 
 .PHONY: clean

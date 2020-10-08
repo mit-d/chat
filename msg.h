@@ -1,8 +1,6 @@
 #ifndef _MSG_H__
 #define _MSG_H__
 
-#include "connection.h"
-#include "connection.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,5 +8,11 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
+
+#define SOCKET_NAME "/tmp/817f599099859209eac6c2b45f7f302c.socket"
+#define BUFFER_SIZE 12
+
+int put_msg(char* socket_file, char* message);
+int msgd(char* socket_file, char* out);
 
 #endif

@@ -6,7 +6,7 @@ int main(int argc, char** argv)
 
     // Handle command line arguments with gnu getopt
     int option;
-    while ((option = getopt(argc, argv, "rdh")) != -1) {
+    while ((option = getopt(argc, argv, "rdhs:")) != -1) {
         switch (option) {
         case 'r': // Receive Message
             // Open File for reading
@@ -20,21 +20,17 @@ int main(int argc, char** argv)
             /* printf("  -d  Start process as daemon\n"); */
             break;
         case 'd': // Start Daemon
+            msgd(SOCKET_NAME, out);
+            break;
+        case 's': // Start Daemon
+            put_msg(SOCKET_NAME, optarg);
             break;
         default:
             break;
         }
-        return 1;
+        return EXIT_SUCCESS;
     }
 
-    if (argc == 2) {
-        sendMessage(FILENAME, argv[1]);
-        return 0;
-    }
-
-    // printf() displays the string inside quotation
-    // Only will happen if presented the wrong arguments
-    printf("Hello, World!\n");
-    return -1;
+    return EXIT_FAILURE;
 }
 
