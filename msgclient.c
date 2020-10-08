@@ -1,7 +1,3 @@
-/*
- * File client.c
- */
-
 #include "msg.h"
 
 int put_msg(char* socket_file, char* message)

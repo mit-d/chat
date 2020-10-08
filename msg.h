@@ -13,6 +13,7 @@
 #define BUFFER_SIZE 12
 
 int put_msg(char* socket_file, char* message);
+int get_msg(char* socket_file, char* message);
 int msgd(char* socket_file, char* out);
 
 #endif

@@ -1,6 +1,6 @@
-
-all: msg
-msg: main.o msgclient.o msgd.o
+target=msg
+all: $(target)
+$(target): main.o msgclient.o msgd.o
 	$(CC) $^ -o $@ 
 main.o: main.c
 	$(CC) $< -c -o $@
@@ -13,4 +13,4 @@ msgd.o: msgd.c
 
 .PHONY: clean
 clean: 
-	$(RM) $(targets) *.o
+	$(RM) $(target) *.o
