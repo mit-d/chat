@@ -1,30 +1,15 @@
-/*
- * File server.c
- */
+#include "msg.h"
 
-#include "connection.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <unistd.h>
-
-int main(int argc, char* argv[])
+int msg_daemon(char* socket, char* out)
 {
     struct sockaddr_un name;
     int down_flag = 0;
     int ret;
     int connection_socket;
     int data_socket;
-    int result;
     char buffer[BUFFER_SIZE];
 
-    /*
-   * In case the program exited inadvertently on the last run,
-   * remove the socket.
-   */
-
+    /* Remove the unix socket if it exists */
     unlink(SOCKET_NAME);
 
     /* Create local socket. */
@@ -35,14 +20,13 @@ int main(int argc, char* argv[])
     }
 
     /*
-   * For portability clear the whole structure, since some
-   * implementations have additional (nonstandard) fields in
-   * the structure.
-   */
+     * For portability clear the whole structure, since some
+     * implementations have additional (nonstandard) fields in
+     * the structure.
+     */
     memset(&name, 0, sizeof(struct sockaddr_un));
 
     /* Bind socket to socket name. */
-
     name.sun_family = AF_UNIX;
     strncpy(name.sun_path, SOCKET_NAME, sizeof(name.sun_path) - 1);
 
@@ -53,10 +37,10 @@ int main(int argc, char* argv[])
     }
 
     /*
-   * Prepare for accepting connections. The backlog size is set
-   * to 20. So while one request is being processed other requests
-   * can be waiting.
-   */
+     * Prepare for accepting connections. The backlog size is set
+     * to 20. So while one request is being processed other requests
+     * can be waiting.
+     */
 
     ret = listen(connection_socket, 20);
     if (ret == -1) {
@@ -64,9 +48,8 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    /* This is the main loop for handling connections. */
+    // MAIN SERVER LOOP //
     for (;;) {
-
         /* Wait for incoming connection. */
         data_socket = accept(connection_socket, NULL, NULL);
         if (data_socket == -1) {
@@ -74,9 +57,7 @@ int main(int argc, char* argv[])
             exit(EXIT_FAILURE);
         }
 
-        result = 0;
         for (;;) {
-
             /* Wait for next data packet. */
 
             ret = read(data_socket, buffer, BUFFER_SIZE);
@@ -89,6 +70,7 @@ int main(int argc, char* argv[])
             buffer[BUFFER_SIZE - 1] = 0;
 
             /* Handle commands. */
+            // Exit on a 'DOWN' command
             if (!strncmp(buffer, "DOWN", BUFFER_SIZE)) {
                 down_flag = 1;
                 break;
@@ -98,13 +80,11 @@ int main(int argc, char* argv[])
                 break;
             }
 
-            /* Add received summand. */
-            result += atoi(buffer);
+            printf("%s\n", buffer);
         }
 
-        /* Send result. */
+        /* Send result here.. */
 
-        sprintf(buffer, "%d", result);
         ret = write(data_socket, buffer, BUFFER_SIZE);
 
         if (ret == -1) {
@@ -121,10 +101,5 @@ int main(int argc, char* argv[])
         }
     }
 
-    close(connection_socket);
-
-    /* Unlink the socket. */
-    unlink(SOCKET_NAME);
-
-    exit(EXIT_SUCCESS);
+    return 0;
 }

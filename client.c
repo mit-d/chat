@@ -2,17 +2,9 @@
  * File client.c
  */
 
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <unistd.h>
-#include "connection.h"
+#include "msg.h"
 
-int
-main(int argc, char *argv[])
+int put_msg(int argc, char* argv[])
 {
     struct sockaddr_un addr;
     int i;
@@ -29,10 +21,10 @@ main(int argc, char *argv[])
     }
 
     /*
-     * For portability clear the whole structure, since some
-     * implementations have additional (nonstandard) fields in
-     * the structure.
-     */
+   * For portability clear the whole structure, since some
+   * implementations have additional (nonstandard) fields in
+   * the structure.
+   */
 
     memset(&addr, 0, sizeof(struct sockaddr_un));
 
@@ -41,8 +33,7 @@ main(int argc, char *argv[])
     addr.sun_family = AF_UNIX;
     strncpy(addr.sun_path, SOCKET_NAME, sizeof(addr.sun_path) - 1);
 
-    ret = connect (data_socket, (const struct sockaddr *) &addr,
-                   sizeof(struct sockaddr_un));
+    ret = connect(data_socket, (const struct sockaddr*)&addr, sizeof(struct sockaddr_un));
     if (ret == -1) {
         fprintf(stderr, "The server is down.\n");
         exit(EXIT_FAILURE);
@@ -60,7 +51,7 @@ main(int argc, char *argv[])
 
     /* Request result. */
 
-    strcpy (buffer, "END");
+    strcpy(buffer, "END");
     ret = write(data_socket, buffer, strlen(buffer) + 1);
     if (ret == -1) {
         perror("write");
