@@ -11,6 +11,7 @@
 
 #define SOCKET_NAME "/tmp/817f599099859209eac6c2b45f7f302c.socket"
 #define BUFFER_SIZE 12
+#define BUF_SIZE 4096
 
 int put_msg(char* socket_file, char* message);
 int get_msg(char* socket_file, char* message);

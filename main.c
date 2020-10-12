@@ -2,12 +2,19 @@
 
 int main(int argc, char** argv)
 {
-    char out[4096];
+    char out[BUF_SIZE];
 
     // Handle command line arguments with gnu getopt
     int option;
-    while ((option = getopt(argc, argv, "rdhs:")) != -1) {
+    while ((option = getopt(argc, argv, "irdhs:")) != -1) {
         switch (option) {
+        case 'i':
+            printf("Entering interactive mode...");
+            for (;;) {
+                printf("%s>>", "User");
+                fgets(out, BUF_SIZE, stdin);
+            }
+            break;
         case 'r': // Receive Message and print to stdout
             //get_msg(SOCKET_NAME, out);
             break;
@@ -18,7 +25,10 @@ int main(int argc, char** argv)
             printf("  -d           Start process as daemon. Receive messages until receiving a DOWN\n");
             printf("  -s [message] Send a single message, non-interactive\n");
             break;
-        case 'd': // Start Daemon
+        case 'd':
+            /* The daemon will work as a server, redirecting all received
+             * messages to standard output 
+             * */
             msgd(SOCKET_NAME, out);
             break;
         case 's': // Send message
@@ -29,12 +39,6 @@ int main(int argc, char** argv)
         }
         return EXIT_SUCCESS;
     }
-
-    if (argc == 1) {
-        printf("Send messages from stdin\n");
-    }
-
-    printf("UID/PID is %i/%i\n", getuid(), getpid());
 
     return EXIT_FAILURE;
 }
